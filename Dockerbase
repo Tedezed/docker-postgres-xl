@@ -1,0 +1,25 @@
+FROM debian:9-slim
+
+RUN apt-get update \
+	&& apt-get install -y \
+		git \
+		make \
+		build-essential \
+		libreadline-dev \
+		zlib1g-dev \
+		bison \
+		flex \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN git clone git://git.postgresql.org/git/postgres-xl.git --depth 1 \
+	&& cd postgres-xl \
+	&& git log -1 \
+	&& ./configure \
+	&& make -j$(nproc) \
+	&& cd contrib \
+	&& make -j$(nproc)
+
+RUN cd /postgres-xl \
+	&& make install \
+	&& cd contrib \
+	&& make install
