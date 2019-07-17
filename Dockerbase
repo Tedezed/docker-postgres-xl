@@ -1,4 +1,5 @@
 FROM debian:9-slim
+MAINTAINER Juan Manuel Torres <juanmanuel.torres@aventurabinaria.es>
 
 RUN apt-get update \
 	&& apt-get install -y \
