@@ -1,26 +1,51 @@
 FROM debian:9-slim
-MAINTAINER Juan Manuel Torres <juanmanuel.torres@aventurabinaria.es>
+
+ARG SOURCE_FROM="git"
+ARG SOURCE="git://git.postgresql.org/git/postgres-xl.git"
 
 RUN apt-get update \
 	&& apt-get install -y \
+		vim \
 		git \
+		curl \
 		make \
 		build-essential \
 		libreadline-dev \
 		zlib1g-dev \
 		bison \
 		flex \
+	&& ln -s /usr/bin/make /usr/bin/gmake \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN git clone git://git.postgresql.org/git/postgres-xl.git --depth 1 \
-	&& cd postgres-xl \
-	&& git log -1 \
-	&& ./configure \
-	&& make -j$(nproc) \
-	&& cd contrib \
-	&& make -j$(nproc)
+RUN echo "[INFO] Download code of Postgres-XL, mode: $SOURCE_FROM"; \
+	if [ "$SOURCE_FROM" = "git" ]; then \
+		git clone $SOURCE --depth 1; \
+	elif [ "$SOURCE_FROM" = "http" ]; then \
+		FILE_NAME=$(echo $SOURCE | tr -s "/" " " | awk '{ print $NF }'); \
+		FILE_EXT=$(echo $FILE_NAME | tr -s "." " " \
+			| awk '{ print $(NF-1)"."$(NF) }'); \
+		curl -SL $SOURCE -o $FILE_NAME; \
+		if [ "$FILE_EXT" = "tar.bz2" ]; then \
+			tar xjf $FILE_NAME; \
+		elif [ "$FILE_EXT" = "tar.gz" ]; then \
+			tar xzf $FILE_NAME; \
+		else \
+			tar xf $FILE_NAME; \
+		fi; \
+		rm -f $FILE_NAME; \
+	else \
+		echo "[ERROR] Variable not valid SOURCE_FROM"; \
+		exit 1; \
+	fi
 
-RUN cd /postgres-xl \
-	&& make install \
-	&& cd contrib \
-	&& make install
+#adduser --uid 999 --disabled-password --gecos "" postgres 
+RUN echo "[INFO] Install Postgres-XL, mode: $SOURCE_FROM"; \
+	cd $(ls -la | grep -E '^d.*postgres-xl' | awk '{ print $NF }'); \
+	./configure \
+		&& make -j$(nproc) \
+		&& cd contrib \
+		&& make -j$(nproc) \
+		&& cd / && cd $(ls -la | grep -E '^d.*postgres-xl' | awk '{ print $NF }') \
+		&& make install \
+		&& cd contrib \
+		&& make install;

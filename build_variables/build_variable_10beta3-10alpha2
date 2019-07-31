@@ -1,0 +1,3 @@
+export CONTAINER_VERSION="10beta3-10alpha2"
+export SOURCE_FROM="git"
+export SOURCE="git://git.postgresql.org/git/postgres-xl.git"

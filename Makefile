@@ -1,11 +1,12 @@
 #!make
-# By Tedezed
 
 CONTAINER_REPO:=tedezed
-CONTAINER_VERSION:=10beta3-10alpha2
 
 build-base:
-	docker build -f Dockerbase -t ${CONTAINER_REPO}/postgres-xl-base:${CONTAINER_VERSION} .
+	docker build -f Dockerbase \
+		--build-arg SOURCE_FROM=${SOURCE_FROM} \
+		--build-arg SOURCE=${SOURCE} \
+		-t ${CONTAINER_REPO}/postgres-xl-base:${CONTAINER_VERSION} .
 
 build:
 	docker build -f Dockerfile -t ${CONTAINER_REPO}/postgres-xl:${CONTAINER_VERSION}  .
