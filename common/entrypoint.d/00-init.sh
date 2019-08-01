@@ -54,7 +54,8 @@ postgres_gtm () {
 }
 
 postgres_datanode () {
-	POSTGRES_COMMENT_CONF="pooler_port,max_pool_size,pool_conn_keepalive,pool_maintenance_timeout,remote_query_cost,network_byte_cost,max_coordinators,max_datanodes,enforce_two_phase_commit"
+	#POSTGRES_COMMENT_CONF="pooler_port,max_pool_size,pool_conn_keepalive,pool_maintenance_timeout,remote_query_cost,network_byte_cost,max_coordinators,max_datanodes,enforce_two_phase_commit"
+	POSTGRES_COMMENT_CONF="remote_query_cost,network_byte_cost,enforce_two_phase_commit"
 	export POSTGRES_MAX_PREPARED_TRANSACTIONS=$POSTGRES_MAX_CONNECTIONS
 	export POSTGRES_SHARED_QUEUES=$((POSTGRES_MAX_CONNECTIONS-(POSTGRES_MAX_CONNECTIONS/100*60)))
 	initdb -D $POSTGRES_DATA --nodename $POSTGRES_HOSTNAME

@@ -45,7 +45,11 @@ RUN echo "[INFO] Install Postgres-XL, mode: $SOURCE_FROM"; \
 		&& make -j$(nproc) \
 		&& cd contrib \
 		&& make -j$(nproc) \
+		&& cd pgxc_ctl \
+		&& make install \
 		&& cd / && cd $(ls -la | grep -E '^d.*postgres-xl' | awk '{ print $NF }') \
 		&& make install \
 		&& cd contrib \
-		&& make install;
+		&& make install \
+		&& cd pgxc_ctl \
+		&& make install

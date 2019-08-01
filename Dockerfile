@@ -25,7 +25,8 @@ ENV POSTGRES_HOSTNAME=changeme \
 	POSTGRES_MAX_PREPARED_TRANSACTIONS=30 \
 	POSTGRES_SHARED_QUEUES=60 \
 	GTM_PROXY_PORT=5432 \
-	GTM_PROXY_WORKERS=4
+	GTM_PROXY_WORKERS=4 \
+	DEBUG="false"
 
 ENV POSTGRES_DATA=$POSTGRES_HOME/data \
 	MAX_POOL_SIZE=$POSTGRES_MAX_CONNECTIONS \
@@ -37,7 +38,7 @@ RUN apt-get update \
 	&& apt-get install -y \
 		libreadline-dev \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& useradd $POSTGRES_USER -d $POSTGRES_HOME \
+	&& useradd $POSTGRES_USER -u 999 -d $POSTGRES_HOME \
 	&& mkdir -p $POSTGRES_DATA \
 	&& chown -R $POSTGRES_USER $POSTGRES_HOME
 
@@ -49,6 +50,6 @@ RUN chown $POSTGRES_USER -R /mnt/common/* \
 USER $POSTGRES_USER
 WORKDIR $POSTGRES_HOME
 
-EXPOSE 5432 6666 6667 6668
+EXPOSE 5432 6666 6667 6668 6669
 VOLUME ["/usr/local/pgsql/data"]
 ENTRYPOINT ["/mnt/common/executable/bash/entrypoint.sh"]
