@@ -1,0 +1,13 @@
+diff --git a/src/bin/initdb/initdb.c b/src/bin/initdb/initdb.c
+index 2f9cfcf..4745242 100644
+--- a/src/bin/initdb/initdb.c
++++ b/src/bin/initdb/initdb.c
+@@ -1605,7 +1605,7 @@ setup_nodeself(FILE *cmdfd)
+ 	fputs(_("creating cluster information ... "), stdout);
+ 	fflush(stdout);
+ 
+-	PG_CMD_PRINTF1("CREATE NODE %s WITH (type = 'coordinator');\n",
++	PG_CMD_PRINTF1("CREATE NODE \"%s\" WITH (type = 'coordinator');\n",
+ 				   nodename);
+ }
+ #endif

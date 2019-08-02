@@ -2,6 +2,7 @@ FROM debian:9-slim
 
 ARG SOURCE_FROM="git"
 ARG SOURCE="git://git.postgresql.org/git/postgres-xl.git"
+ARG COMMIT="1cc1df104888bd4fd2c9c86aa6846543c78609be"
 
 RUN apt-get update \
 	&& apt-get install -y \
@@ -19,7 +20,7 @@ RUN apt-get update \
 
 RUN echo "[INFO] Download code of Postgres-XL, mode: $SOURCE_FROM"; \
 	if [ "$SOURCE_FROM" = "git" ]; then \
-		git clone $SOURCE --depth 1; \
+		git clone $SOURCE --depth 20; \
 	elif [ "$SOURCE_FROM" = "http" ]; then \
 		FILE_NAME=$(echo $SOURCE | tr -s "/" " " | awk '{ print $NF }'); \
 		FILE_EXT=$(echo $FILE_NAME | tr -s "." " " \
@@ -36,6 +37,16 @@ RUN echo "[INFO] Download code of Postgres-XL, mode: $SOURCE_FROM"; \
 	else \
 		echo "[ERROR] Variable not valid SOURCE_FROM"; \
 		exit 1; \
+	fi
+
+ADD git-patch/ git-patch
+RUN if [ "$SOURCE_FROM" = "git" ]; then \
+		cd /postgres-xl; \
+		git reset --hard "$COMMIT"; \
+		for p in $(ls /git-patch/* | grep "\.patch"); do \
+			cat $p; \
+			patch -p1 -f < $p; \
+		done; \
 	fi
 
 #adduser --uid 999 --disabled-password --gecos "" postgres 

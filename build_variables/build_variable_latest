@@ -1,3 +1,4 @@
 export CONTAINER_VERSION="latest"
 export SOURCE_FROM="git"
 export SOURCE="git://git.postgresql.org/git/postgres-xl.git"
+export COMMIT="1cc1df104888bd4fd2c9c86aa6846543c78609be"
